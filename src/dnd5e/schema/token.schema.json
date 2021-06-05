@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ttdl.roll/dnd5e.token",
+  "title": "Token",
+  "description": "A token contains the stats, classes, items and spells belonging to a player, NPC or monster",
+  "type": "object",
+  "properties": {
+    "ownerID": {
+      "type": "string"
+    },
+    "campaignID": {}
+  }
+}
