@@ -1,5 +1,5 @@
 {
-  "name": "tabletop-design-language",
+  "name": "ttdl",
   "version": "0.0.1",
   "main": "lib/index.js",
   "repository": "git@github.com:jhbuchanan45/tabletop-design-language.git",
@@ -7,6 +7,10 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./dnd5e": "./lib/dnd5e/dnd5e.js"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.1",
