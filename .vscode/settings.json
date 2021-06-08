@@ -1,5 +1,8 @@
 {
   "yaml.schemas": {
     "./src/dnd5e/schema/dnd5e.schema.json": "*.dnd5e.ttdl.yml"
-  }
+  },
+  "json.schemas": [
+    { "url": "./src/dnd5e/schema/dnd5e.schema.json", "fileMatch": ["*.dnd5e.ttdl.json"] }
+  ]
 }
