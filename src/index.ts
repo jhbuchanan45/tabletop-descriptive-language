@@ -1,1 +1,1 @@
-export { dnd5e } from './dnd5e/dnd5e';
+export { Dnd5e } from './dnd5e/dnd5e';

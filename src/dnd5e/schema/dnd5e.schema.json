@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+
+  "$id": "ttdl/dnd5e",
+  "oneOf": [
+    { "$ref": "#/definitions/token" },
+    { "$ref": "#/definitions/class" },
+    { "$ref": "#/definitions/race" }
+  ],
+  "definitions": {
+    "class": {
+      "title": "class",
+      "description": "A class contains a set of features with modifiers that describe the abilites it can use and any bonuses",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "class"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "token": {
+      "title": "token",
+      "description": "A token describes the properties and stats of a player character, NPC or monster",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "token"
+        },
+        "name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "race": {
+          "oneOf": [
+            { "$ref": "#/definitions/race" },
+            {
+              "$ref": "#/definitions/common/id"
+            },
+            {
+              "$ref": "#/definitions/common/ref/race"
+            }
+          ]
+        },
+        "alignment": {
+          "type": "string",
+          "pattern": "^((Chaotic|Lawful) (Good|Evil|Neutral))|((Neutral)( (Good|Evil))?)$"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/class"
+              },
+              {
+                "$ref": "#/definitions/common/id"
+              },
+              {
+                "$ref": "#/definitions/common/ref/class"
+              }
+            ]
+          }
+        },
+        "inspiration": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "STR": { "$ref": "#/definitions/common/score" },
+            "DEX": { "$ref": "#/definitions/common/score" },
+            "CON": { "$ref": "#/definitions/common/score" },
+            "INT": { "$ref": "#/definitions/common/score" },
+            "WIS": { "$ref": "#/definitions/common/score" },
+            "CHA": { "$ref": "#/definitions/common/score" }
+          },
+          "required": ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+        },
+        "initiative": {
+          "title": "Initiative Bonus",
+          "description": "Manually declare the initiative bonus of the token",
+          "type": "integer"
+        },
+        "proficiency": {
+          "title": "Proficiency Bonus",
+          "description": "Manually declare the proficiency bonus of the token",
+          "type": "integer"
+        },
+        "vulnerabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "resistances": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["type", "name", "attributes"],
+      "additionalProperties": false
+    },
+    "race": {
+      "title": "race",
+      "description": "A race",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "race"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common": {
+      "id": {
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"],
+        "additionalProperties": false
+      },
+      "score": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 30
+      },
+      "ref": {
+        "race": {
+          "type": "object",
+          "properties": {
+            "ref": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
+          },
+          "required": ["ref"],
+          "additionalProperties": false
+        },
+        "class": {
+          "type": "object",
+          "properties": {
+            "ref": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
+          },
+          "required": ["ref"],
+          "additionalProperties": false
+        }
+      }
+    }
+  }
+}

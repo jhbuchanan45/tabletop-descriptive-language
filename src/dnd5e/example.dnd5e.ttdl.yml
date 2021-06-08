@@ -1,0 +1,16 @@
+type: 'token'
+icon: 'test.png'
+name: 'Eldridge'
+race:
+  ref: 'race(test)'
+alignment: 'Neutral Good'
+classes:
+  - id: 'test'
+attributes:
+  STR: 10
+  DEX: 10
+  CON: 10
+  INT: 10
+  WIS: 10
+  CHA: 10
+inspiration: true
