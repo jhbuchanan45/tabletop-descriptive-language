@@ -15,6 +15,9 @@
     ".": "./lib/index.js",
     "./dnd5e": "./lib/dnd5e/dnd5e.js"
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "devDependencies": {
     "@types/js-yaml": "^4.0.1",
     "@types/node": "^15.12.1",

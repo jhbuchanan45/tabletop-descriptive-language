@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-
   "$id": "ttdl/dnd5e",
   "oneOf": [
     { "$ref": "#/definitions/token" },
@@ -17,10 +16,17 @@
           "type": "string",
           "const": "class"
         },
+        "refName": {
+          "$ref": "#/definitions/common/noSpaces"
+        },
+        "ID": {
+          "$ref": "#/definitions/common/noSpaces"
+        },
         "label": {
           "type": "string"
         }
       },
+      "required": ["refName"],
       "additionalProperties": false
     },
     "token": {
@@ -31,6 +37,12 @@
         "type": {
           "type": "string",
           "const": "token"
+        },
+        "refName": {
+          "$ref": "#/definitions/common/noSpaces"
+        },
+        "ID": {
+          "$ref": "#/definitions/common/noSpaces"
         },
         "name": {
           "type": "string"
@@ -95,15 +107,22 @@
           "type": "integer"
         },
         "vulnerabilities": {
+          "default": [],
           "type": "array",
           "items": { "type": "string" }
         },
         "resistances": {
+          "default": [],
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "immunities": {
+          "default": [],
           "type": "array",
           "items": { "type": "string" }
         }
       },
-      "required": ["type", "name", "attributes"],
+      "required": ["type", "name", "refName", "attributes"],
       "additionalProperties": false
     },
     "race": {
@@ -115,17 +134,24 @@
           "type": "string",
           "const": "race"
         },
+        "refName": {
+          "$ref": "#/definitions/common/noSpaces"
+        },
+        "ID": {
+          "$ref": "#/definitions/common/noSpaces"
+        },
         "label": {
           "type": "string"
         }
       },
+      "required": ["refName"],
       "additionalProperties": false
     },
     "common": {
       "id": {
         "type": "object",
-        "properties": { "id": { "type": "string" } },
-        "required": ["id"],
+        "properties": { "idRef": { "type": "string" } },
+        "required": ["idRef"],
         "additionalProperties": false
       },
       "score": {
@@ -133,21 +159,25 @@
         "minimum": 1,
         "maximum": 30
       },
+      "noSpaces": {
+        "type": "string",
+        "pattern": "^(\\S*)$"
+      },
       "ref": {
         "race": {
           "type": "object",
           "properties": {
-            "ref": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
+            "nameRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
           },
-          "required": ["ref"],
+          "required": ["nameRef"],
           "additionalProperties": false
         },
         "class": {
           "type": "object",
           "properties": {
-            "ref": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
+            "nameRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
           },
-          "required": ["ref"],
+          "required": ["nameRef"],
           "additionalProperties": false
         }
       }

@@ -1,11 +1,12 @@
 type: 'token'
+refName: 'eldridge'
 icon: 'test.png'
 name: 'Eldridge'
 race:
-  ref: 'race(test)'
+  idRef: 'race(test)'
 alignment: 'Neutral Good'
 classes:
-  - id: 'test'
+  - idRef: 'test'
 attributes:
   STR: 10
   DEX: 10

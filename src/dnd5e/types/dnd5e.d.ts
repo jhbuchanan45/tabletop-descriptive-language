@@ -20,24 +20,26 @@ export type ProficiencyBonus = number;
  */
 export interface Token {
   type: "token";
+  refName: string;
+  ID?: string;
   name: string;
   icon?: string;
   race?:
     | Race
     | {
-        id: string;
+        idRef: string;
       }
     | {
-        ref: string;
+        nameRef: string;
       };
   alignment?: string;
   classes?: (
     | Class
     | {
-        id: string;
+        idRef: string;
       }
     | {
-        ref: string;
+        nameRef: string;
       }
   )[];
   inspiration?: boolean;
@@ -54,12 +56,15 @@ export interface Token {
   proficiency?: ProficiencyBonus;
   vulnerabilities?: string[];
   resistances?: string[];
+  immunities?: string[];
 }
 /**
  * A race
  */
 export interface Race {
   type?: "race";
+  refName: string;
+  ID?: string;
   label?: string;
 }
 /**
@@ -67,5 +72,7 @@ export interface Race {
  */
 export interface Class {
   type?: "class";
+  refName: string;
+  ID?: string;
   label?: string;
 }
