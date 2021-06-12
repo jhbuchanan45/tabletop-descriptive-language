@@ -6,7 +6,7 @@ race:
   idRef: 'race(test)'
 alignment: 'Neutral Good'
 classes:
-  - idRef: 'test'
+  - idRef: 'class(test)'
 attributes:
   STR: 10
   DEX: 10

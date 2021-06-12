@@ -1,7 +1,7 @@
 import type { Class as ClassJSON } from './types/dnd5e';
 import type { GenericOpts } from '../common/types';
 
-type ClassOpts = GenericOpts;
+type ClassOpts = Readonly<GenericOpts>;
 
 export default class Class {
   private classOpts: ClassOpts;

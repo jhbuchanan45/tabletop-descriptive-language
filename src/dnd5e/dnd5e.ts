@@ -7,13 +7,14 @@ import type { Token as TokenJSON, Class as ClassJSON, Race as RaceJSON } from '.
 import Class from './class';
 import Race from './race';
 import type { RefHandler } from '../common/types/index';
+import parseReference from '../common/parseReference';
 
 class CategoryMap<ObjectStore> {
-  private byID: Map<string, ObjectStore>;
+  private byID: Map<string, unknown>;
   private byName: Map<string, ObjectStore>;
 
-  constructor() {
-    this.byID = new Map();
+  constructor(idMap) {
+    this.byID = idMap;
     this.byName = new Map();
   }
 
@@ -32,6 +33,7 @@ type DND5eOpts = {
 };
 
 class DND5e {
+  private idMap: Map<string, unknown>;
   private tokens: CategoryMap<Token>;
   private classes: CategoryMap<Class>;
   private races: CategoryMap<Race>;
@@ -41,12 +43,13 @@ class DND5e {
   private refHandler: RefHandler;
 
   constructor(opts: DND5eOpts = {}) {
-    this.tokens = new CategoryMap();
-    this.classes = new CategoryMap();
-    this.races = new CategoryMap();
-    this.subclasses = new CategoryMap();
-    this.items = new CategoryMap();
-    this.spells = new CategoryMap();
+    this.idMap = new Map();
+    this.tokens = new CategoryMap(this.idMap);
+    this.classes = new CategoryMap(this.idMap);
+    this.races = new CategoryMap(this.idMap);
+    this.subclasses = new CategoryMap(this.idMap);
+    this.items = new CategoryMap(this.idMap);
+    this.spells = new CategoryMap(this.idMap);
 
     if (opts.refHandler) {
       this.refHandler = opts.refHandler;
@@ -57,7 +60,22 @@ class DND5e {
     }
   }
 
-  private resolveReferences() {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  private resolveReferences<T extends object>(
+    objReferences: T,
+    objResolved: T,
+    refPaths: string[]
+  ) {
+    refPaths.forEach((path) => {
+      const reference = objReferences[path];
+
+      // idRef then nameRef then straight obj
+      if (reference.idRef) {
+        const [type, ref] = parseReference(reference.idRef);
+        console.log(type, ref);
+      }
+    });
+
     return;
   }
 
@@ -83,7 +101,7 @@ class DND5e {
       this.validateObject(tokenJSON, 'token');
       const parsedTokenJSON = tokenJSON as TokenJSON;
 
-      const token = new Token(parsedTokenJSON);
+      const token = new Token(parsedTokenJSON, this.resolveReferences);
       this.tokens.set(token, parsedTokenJSON.refName, parsedTokenJSON.ID);
     });
   }

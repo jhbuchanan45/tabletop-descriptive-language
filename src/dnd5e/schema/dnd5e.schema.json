@@ -54,10 +54,10 @@
           "oneOf": [
             { "$ref": "#/definitions/race" },
             {
-              "$ref": "#/definitions/common/id"
+              "$ref": "#/definitions/common/ref/race/id"
             },
             {
-              "$ref": "#/definitions/common/ref/race"
+              "$ref": "#/definitions/common/ref/race/name"
             }
           ]
         },
@@ -73,10 +73,10 @@
                 "$ref": "#/definitions/class"
               },
               {
-                "$ref": "#/definitions/common/id"
+                "$ref": "#/definitions/common/ref/class/id"
               },
               {
-                "$ref": "#/definitions/common/ref/class"
+                "$ref": "#/definitions/common/ref/class/name"
               }
             ]
           }
@@ -165,20 +165,40 @@
       },
       "ref": {
         "race": {
-          "type": "object",
-          "properties": {
-            "nameRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
+          "id": {
+            "type": "object",
+            "properties": {
+              "idRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
+            },
+            "required": ["idRef"],
+            "additionalProperties": false
           },
-          "required": ["nameRef"],
-          "additionalProperties": false
+          "name": {
+            "type": "object",
+            "properties": {
+              "nameRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
+            },
+            "required": ["nameRef"],
+            "additionalProperties": false
+          }
         },
         "class": {
-          "type": "object",
-          "properties": {
-            "nameRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
+          "id": {
+            "type": "object",
+            "properties": {
+              "idRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
+            },
+            "required": ["idRef"],
+            "additionalProperties": false
           },
-          "required": ["nameRef"],
-          "additionalProperties": false
+          "name": {
+            "type": "object",
+            "properties": {
+              "nameRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
+            },
+            "required": ["nameRef"],
+            "additionalProperties": false
+          }
         }
       }
     }

@@ -1,7 +1,7 @@
 import type { Race as RaceJSON } from './types/dnd5e';
 import type { GenericOpts } from '../common/types';
 
-type RaceOpts = GenericOpts;
+type RaceOpts = Readonly<GenericOpts>;
 
 export default class Race {
   private raceOpts: RaceOpts;

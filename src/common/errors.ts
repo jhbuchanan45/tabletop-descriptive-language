@@ -25,6 +25,16 @@ export class TypeValidationError extends Error {
   }
 }
 
+export class InvalidRefError extends Error {
+  constructor(ref: string) {
+    const description = `Reference '${ref}' failed to split into correct components`;
+
+    super(description);
+
+    Error.captureStackTrace(this);
+  }
+}
+
 export class AjvValidationError extends Error {
   ajvErrors: ErrorObject[] | string;
 
