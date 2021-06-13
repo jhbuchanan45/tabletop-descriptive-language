@@ -27,19 +27,13 @@ export interface Token {
   race?:
     | Race
     | {
-        idRef: string;
-      }
-    | {
-        nameRef: string;
+        ref: string;
       };
   alignment?: string;
   classes?: (
     | Class
     | {
-        idRef: string;
-      }
-    | {
-        nameRef: string;
+        ref: string;
       }
   )[];
   inspiration?: boolean;

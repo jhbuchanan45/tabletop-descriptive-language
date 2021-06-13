@@ -3,10 +3,10 @@ refName: 'eldridge'
 icon: 'test.png'
 name: 'Eldridge'
 race:
-  idRef: 'race(test)'
+  ref: 'race(human)'
 alignment: 'Neutral Good'
 classes:
-  - idRef: 'class(test)'
+  - ref: 'class(id:yeet)'
 attributes:
   STR: 10
   DEX: 10

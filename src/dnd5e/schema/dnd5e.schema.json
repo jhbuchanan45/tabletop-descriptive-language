@@ -54,10 +54,7 @@
           "oneOf": [
             { "$ref": "#/definitions/race" },
             {
-              "$ref": "#/definitions/common/ref/race/id"
-            },
-            {
-              "$ref": "#/definitions/common/ref/race/name"
+              "$ref": "#/definitions/common/ref/race"
             }
           ]
         },
@@ -73,10 +70,7 @@
                 "$ref": "#/definitions/class"
               },
               {
-                "$ref": "#/definitions/common/ref/class/id"
-              },
-              {
-                "$ref": "#/definitions/common/ref/class/name"
+                "$ref": "#/definitions/common/ref/class"
               }
             ]
           }
@@ -165,40 +159,22 @@
       },
       "ref": {
         "race": {
-          "id": {
-            "type": "object",
-            "properties": {
-              "idRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
-            },
-            "required": ["idRef"],
-            "additionalProperties": false
+          "type": "object",
+          "description": "Can contain a reference to a race in the format 'race(human...)' for a name reference or 'race(id:d23fe3...)' for a reference by ID",
+          "properties": {
+            "ref": { "type": "string", "pattern": "^race\\((id:)?\\w+\\)$" }
           },
-          "name": {
-            "type": "object",
-            "properties": {
-              "nameRef": { "type": "string", "pattern": "^race\\(\\w+\\)$" }
-            },
-            "required": ["nameRef"],
-            "additionalProperties": false
-          }
+          "required": ["ref"],
+          "additionalProperties": false
         },
         "class": {
-          "id": {
-            "type": "object",
-            "properties": {
-              "idRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
-            },
-            "required": ["idRef"],
-            "additionalProperties": false
+          "type": "object",
+          "description": "Can contain a reference to a class in the format 'class(human...)' for a name reference or 'class(id:d23fe3...)' for a reference by ID",
+          "properties": {
+            "ref": { "type": "string", "pattern": "^class\\((id:)?\\w+\\)$" }
           },
-          "name": {
-            "type": "object",
-            "properties": {
-              "nameRef": { "type": "string", "pattern": "^class\\(\\w+\\)$" }
-            },
-            "required": ["nameRef"],
-            "additionalProperties": false
-          }
+          "required": ["ref"],
+          "additionalProperties": false
         }
       }
     }

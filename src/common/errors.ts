@@ -1,12 +1,13 @@
 import { ErrorObject } from 'ajv';
+import { MissingRefs } from './types';
 
 export class UnresolvedRefError extends Error {
-  missingRefs: { byId: string[]; byName: string[] };
+  missingRefs: MissingRefs;
 
-  constructor(missingRefs: { byId: string[]; byName: string[] }) {
-    const description = `Unable to resolve these references by ID, (${missingRefs.byId.join(
+  constructor(missingRefs: MissingRefs) {
+    const description = `Unable to resolve these references by ID, (${missingRefs.id.join(
       ' ,'
-    )}), and/or these by name reference, (${missingRefs.byName.join(' ,')})`;
+    )}), and/or these by name reference, (${missingRefs.name.join(' ,')})`;
 
     super(description);
     this.missingRefs = missingRefs;

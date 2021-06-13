@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
-export type RefHandler = (missingRefs: { byId: string[]; byName: string[] }) => void;
+export type MissingRefs = { id: Array<[string, string]>; name: Array<[string, string]> };
+export type RefHandler = (missingRefs: MissingRefs) => void;
 
 // Reference https://stackoverflow.com/questions/58434389/typescript-deep-keyof-of-a-nested-object/58436959#58436959
 // Through line 26

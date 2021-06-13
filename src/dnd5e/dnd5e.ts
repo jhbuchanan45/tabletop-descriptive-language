@@ -1,12 +1,17 @@
 // import tokenSchema from './schema/token.schema.json';
 import yaml from 'js-yaml';
 import ajv from './schema/validation';
-import { AjvValidationError, TypeValidationError, UnresolvedRefError } from '../common/errors';
+import {
+  AjvValidationError,
+  InvalidRefError,
+  TypeValidationError,
+  UnresolvedRefError
+} from '../common/errors';
 import Token from './token';
 import type { Token as TokenJSON, Class as ClassJSON, Race as RaceJSON } from './types/dnd5e';
 import Class from './class';
 import Race from './race';
-import type { RefHandler } from '../common/types/index';
+import type { MissingRefs, RefHandler } from '../common/types/index';
 import parseReference from '../common/parseReference';
 
 class CategoryMap<ObjectStore> {
@@ -24,12 +29,13 @@ class CategoryMap<ObjectStore> {
   }
 
   public getByKey(key: string) {
-    return this.byID[key] || this.byName[key] || null;
+    return this.byID.get(key) || this.byName.get(key) || null;
   }
 }
 
 type DND5eOpts = {
   refHandler?: RefHandler;
+  refHandlerAttempts?: number;
 };
 
 class DND5e {
@@ -40,6 +46,7 @@ class DND5e {
   private subclasses: CategoryMap<unknown>;
   private items: CategoryMap<unknown>;
   private spells: CategoryMap<unknown>;
+  private opts: DND5eOpts;
   private refHandler: RefHandler;
 
   constructor(opts: DND5eOpts = {}) {
@@ -51,6 +58,7 @@ class DND5e {
     this.items = new CategoryMap(this.idMap);
     this.spells = new CategoryMap(this.idMap);
 
+    this.opts = opts;
     if (opts.refHandler) {
       this.refHandler = opts.refHandler;
     } else {
@@ -61,23 +69,98 @@ class DND5e {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  private resolveReferences<T extends object>(
+  private resolveReferences = <T extends object>(
+    dnd5e: DND5e,
     objReferences: T,
     objResolved: T,
     refPaths: string[]
-  ) {
-    refPaths.forEach((path) => {
-      const reference = objReferences[path];
+  ) => {
+    const resolveAll = () => {
+      const missingRefs: MissingRefs = {
+        id: [],
+        name: []
+      };
 
-      // idRef then nameRef then straight obj
-      if (reference.idRef) {
-        const [type, ref] = parseReference(reference.idRef);
-        console.log(type, ref);
+      const resolveRef = (possibleRef) => {
+        let type: string, ref: string;
+
+        // idRef then nameRef handled in getByKey(ref)
+        if (possibleRef.ref) {
+          [type, ref] = parseReference(possibleRef.ref);
+        } else {
+          // object must be inline or blank
+          return possibleRef;
+        }
+
+        const idSpecified = ref.startsWith('id:');
+        if (idSpecified) {
+          // cleanup ref for searching
+          ref = ref.substring(3);
+        }
+
+        // get object from correct store
+        let referencedObject;
+        switch (type) {
+          case 'token':
+            referencedObject = dnd5e.tokens.getByKey(ref);
+            break;
+          case 'class':
+            referencedObject = dnd5e.classes.getByKey(ref);
+            break;
+          case 'race':
+            referencedObject = dnd5e.races.getByKey(ref);
+            break;
+          case 'subclass':
+            referencedObject = dnd5e.subclasses.getByKey(ref);
+            break;
+          case 'item':
+            referencedObject = dnd5e.items.getByKey(ref);
+            break;
+          case 'spell':
+            referencedObject = dnd5e.spells.getByKey(ref);
+            break;
+          default:
+            throw new InvalidRefError(type);
+        }
+
+        if (!referencedObject) {
+          if (idSpecified) {
+            missingRefs.id.push([type, 'id:' + ref]);
+          } else {
+            missingRefs.name.push([type, ref]);
+          }
+        } else {
+          // insert referenced object into resolvedObject
+          // OVERWRITES EXISTING DATA?
+          return referencedObject.getResolved();
+        }
+      };
+
+      // check each path, if array resolve each child ref in .map()
+      refPaths.forEach((path): void => {
+        const refObject = objReferences[path];
+
+        if (refObject instanceof Array) {
+          objResolved[path] = refObject.map((childRef) => resolveRef(childRef));
+        } else {
+          objResolved[path] = resolveRef(refObject);
+        }
+      });
+
+      if (missingRefs.id.length !== 0 || missingRefs.name.length !== 0)
+        throw new UnresolvedRefError(missingRefs);
+    };
+
+    for (let attempts = 0; attempts < (dnd5e.opts.refHandlerAttempts || 1); attempts++) {
+      try {
+        resolveAll();
+      } catch (e) {
+        if (e instanceof UnresolvedRefError) {
+          this.refHandler(e.missingRefs);
+        } else throw e;
       }
-    });
-
-    return;
-  }
+    }
+  };
 
   private validateObject<ObjectType>(obj: ObjectType, type?: string) {
     if (!obj || typeof obj === 'string' || typeof obj === 'number')
@@ -101,7 +184,9 @@ class DND5e {
       this.validateObject(tokenJSON, 'token');
       const parsedTokenJSON = tokenJSON as TokenJSON;
 
-      const token = new Token(parsedTokenJSON, this.resolveReferences);
+      const token = new Token(parsedTokenJSON, this.resolveReferences.bind(null, this));
+      token.resolveReferences();
+
       this.tokens.set(token, parsedTokenJSON.refName, parsedTokenJSON.ID);
     });
   }
@@ -114,7 +199,9 @@ class DND5e {
       this.validateObject(classJSON, 'class');
       const parsedClassJSON = classJSON as ClassJSON;
 
-      const classs = new Class(parsedClassJSON);
+      const classs = new Class(parsedClassJSON, this.resolveReferences.bind(null, this));
+      classs.resolveReferences();
+
       this.classes.set(classs, parsedClassJSON.refName, parsedClassJSON.ID);
     });
   }
@@ -127,7 +214,9 @@ class DND5e {
       this.validateObject(raceJSON, 'race');
       const parsedRaceJSON = raceJSON as RaceJSON;
 
-      const race = new Race(parsedRaceJSON);
+      const race = new Race(parsedRaceJSON, this.resolveReferences.bind(null, this));
+      race.resolveReferences();
+
       this.races.set(race, parsedRaceJSON.refName, parsedRaceJSON.ID);
     });
   }
