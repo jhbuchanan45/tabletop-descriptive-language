@@ -1,6 +1,6 @@
-# Tabletop Design Language
+# Tabletop Descriptive Language
 
-## 'not a langauge'
+## 'not a language'
 
 Aims to offer an API and standarised yaml/json formats for various tabletop game systems, beginning with DND 5e
 
